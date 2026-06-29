@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Una sorpresa per Ste</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#120816;color:white}
+body{overflow:hidden}
+#bg{position:fixed;inset:0;background-size:cover;background-position:center;filter:brightness(.62);transition:.6s}
+#shade{position:fixed;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.10),rgba(18,8,22,.88))}
+#app{position:relative;z-index:2;height:100%;display:flex;align-items:flex-end;justify-content:center;padding:22px}
+.card{width:min(580px,100%);background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:26px;padding:24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.45);backdrop-filter:blur(12px)}
+h1{font-size:48px;line-height:1;margin:0 0 14px}
+h2{font-size:32px;line-height:1.1;margin:0 0 12px}
+p{font-size:18px;line-height:1.45;color:rgba(255,255,255,.88)}
+button{width:100%;padding:15px;margin:9px 0;border-radius:16px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.16);color:white;font-size:17px}
+.primary{background:white;color:#5b1638;font-weight:800}
+.gift{background:linear-gradient(135deg,#ff6fae,#ffd166);color:#2b0714;font-weight:900}
+#top{position:fixed;top:14px;left:16px;right:16px;z-index:3;height:7px;background:rgba(255,255,255,.20);border-radius:999px;overflow:hidden}
+#bar{height:100%;width:0;background:white;transition:.4s}
+.loader{height:13px;background:rgba(255,255,255,.18);border-radius:999px;overflow:hidden;margin:22px 0}
+.loader span{display:block;height:100%;background:white;width:0;animation:load 2.4s forwards}
+@keyframes load{to{width:100%}}
+.pass{background:white;color:#23121c;border-radius:22px;padding:20px;text-align:left;margin-top:16px}
+.pass .dest{font-size:42px;font-weight:900;color:#7c174c;margin:6px 0}
+.map{height:300px;border-radius:22px;position:relative;overflow:hidden;background:linear-gradient(135deg,#16384f,#83606f)}
+.plane{position:absolute;left:18%;top:52%;font-size:38px;animation:fly 2.5s forwards}
+@keyframes fly{to{left:67%;top:38%;transform:rotate(12deg)}}
+.line{position:absolute;left:24%;top:58%;width:48%;height:3px;background:#fff;transform:rotate(-13deg);animation:line 2.3s forwards;clip-path:inset(0 100% 0 0)}
+@keyframes line{to{clip-path:inset(0 0 0 0)}}
+.city{position:absolute;left:55%;top:56%;font-size:31px;font-weight:900;color:#ffd166;opacity:0;animation:show 1s 2s forwards}
+@keyframes show{to{opacity:1}}
+</style>
+</head>
+<body>
+<div id="bg"></div><div id="shade"></div><div id="top"><div id="bar"></div></div><main id="app"></main>
+<script>
+const photos = ['assets/foto1.jpg', 'assets/foto2.jpg', 'assets/foto3.jpg', 'assets/foto4.jpg', 'assets/foto5.jpg', 'assets/foto6.jpg', 'assets/foto7.jpg'];
+let step = 0;
+const app = document.getElementById("app");
+const bg = document.getElementById("bg");
+const bar = document.getElementById("bar");
+
+const pages = [
+  {photo:0, title:"Ciao Ste ❤️", text:"Ho preparato qualcosa solo per te.<br><br>Un piccolo viaggio… prima ancora di partire.", button:"Inizia"},
+  {photo:1, title:"Prima domanda", question:"Dove ci siamo conosciuti?", answers:["In piscina","In spiaggia","A Olbia"]},
+  {photo:6, title:"Seconda domanda", question:"Qual è la cosa più bella quando siamo insieme?", answers:["Passeggiare","Ridere","Non importa dove… basta esserci"]},
+  {photo:2, title:"Terza domanda", question:"Se dovessimo partire domani, cosa porteresti?", answers:["Scarpe comode","Un sorriso","Me ❤️"]},
+  {photo:4, title:"Ultima domanda", question:"Se dovessi scegliere una parola per noi...", answers:["Complicità","Avventura","Amore"]},
+  {photo:5, title:"Ci siamo quasi…", text:"Ora lascia che siano i ricordi a scegliere la destinazione perfetta.", button:"Scoprila ❤️"}
+];
+
+function setPhoto(n) {
+  bg.style.backgroundImage = "url('" + photos[n] + "')";
+}
+
+function render() {
+  const p = pages[step];
+  setPhoto(p.photo);
+  bar.style.width = Math.round((step / (pages.length + 3)) * 100) + "%";
+  if (p.question) {
+    app.innerHTML = '<section class="card"><h2>'+p.title+'</h2><p>'+p.question+'</p>' +
+      p.answers.map(a => '<button onclick="next()">'+a+'</button>').join("") +
+      '</section>';
+  } else {
+    app.innerHTML = '<section class="card"><h1>'+p.title+'</h1><p>'+p.text+'</p><button class="primary" onclick="next()">'+p.button+'</button></section>';
+  }
+}
+
+function next() {
+  step++;
+  if (step < pages.length) render();
+  else analyze();
+}
+
+function analyze() {
+  setPhoto(3);
+  bar.style.width = "75%";
+  app.innerHTML = '<section class="card"><h2>Analizzando i ricordi…</h2><p>Sto cercando la destinazione perfetta per voi due.</p><div class="loader"><span></span></div></section>';
+  setTimeout(map, 2700);
+}
+
+function map() {
+  bar.style.width = "92%";
+  app.innerHTML = '<section class="card"><h2>Rotta trovata ✈️</h2><div class="map"><div class="line"></div><div class="plane">✈️</div><div class="city">SIVIGLIA</div></div></section>';
+  setTimeout(boarding, 3600);
+}
+
+function boarding() {
+  bar.style.width = "100%";
+  app.innerHTML = '<section class="card"><h2>Il tuo regalo</h2><div class="pass"><small>BOARDING PASS</small><p>Federico ❤️ Stefania</p><div class="dest">SIVIGLIA</div><p><b>Viaggio:</b> weekend romantico</p><p><b>Posti:</b> insieme</p><p><b>Gate:</b> quando vuoi</p><p><b>Stato:</b> confermato ❤️</p></div><button class="gift" onclick="gift()">🎁 Apri il tuo regalo</button></section>';
+}
+
+function gift() {
+  setPhoto(0);
+  app.innerHTML = '<section class="card"><h2>Buono viaggio per due ❤️</h2><p>Ti regalo un fine settimana insieme a <b>Siviglia</b>.</p><p>Perché i ricordi più belli sono ancora quelli che dobbiamo costruire.</p><p>Prepara una piccola valigia… al resto penso io.</p><p><b>Federico</b></p></section>';
+}
+
+render();
+</script>
+<noscript>Per vedere la sorpresa serve aprire questo file con Safari, Chrome o un browser con JavaScript attivo.</noscript>
+</body>
+</html>
